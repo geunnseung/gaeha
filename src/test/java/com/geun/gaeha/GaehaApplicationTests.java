@@ -10,7 +10,7 @@ class GaehaApplicationTests {
 	@DisplayName("테스트")
 	@Test
 	void test() {
-		System.out.println("Hello!");
+		System.out.println("Hello!!");
 	}
 
 }
