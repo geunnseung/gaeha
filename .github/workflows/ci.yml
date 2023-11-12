@@ -4,8 +4,8 @@ name: gaeha CI
 # workflow 트리거
 on:
   # develop branch에 PR이 왔을 떄
-  push:
-    branches: [ "main" ]
+  pull_request:
+    branches: [ "develop" ]
 
 # workflow 권한
 permissions:
