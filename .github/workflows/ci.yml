@@ -1,5 +1,5 @@
 # workflow 이름
-name: gaeha CI
+name: gaeha develop branch CI
 
 # workflow 트리거
 on:
