@@ -50,6 +50,7 @@ jobs:
   deploy:
     name: deploy
     needs: build
+    runs-on: self-hosted
     steps:
       # ssh 접속
       - name: connect to server
