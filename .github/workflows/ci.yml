@@ -1,0 +1,36 @@
+# workflow 이름
+name: gaeha CI
+
+# workflow 트리거
+on:
+  # develop branch에 PR이 왔을 떄
+  push:
+    branches: [ "main" ]
+
+# workflow 권한
+permissions:
+  contents: read
+
+# 작업 정의
+jobs:
+  build:
+    name: CI
+    # 작업이 실행될 환경
+    runs-on: ubuntu-latest
+    # step 설정
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'corretto'
+    # 시간대 설정    
+    - name: set up TimeZone
+      run: |
+        sudo timedatectl set-timezone Asia/Seoul
+        
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
+      with:
+        arguments: build
