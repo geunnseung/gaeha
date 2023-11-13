@@ -32,10 +32,6 @@ jobs:
         run: |
           sudo timedatectl set-timezone Asia/Seoul
 
-      # 권한 부여
-      - name: Give permission for Gradle
-        run: chmod +x gradlew
-
       - name: Build with Gradle
         uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0
         with:
@@ -47,27 +43,33 @@ jobs:
           name: ApplicationJarFile
           path: build/libs/*.jar
 
-      # ssh 접속
+  docker-push:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Jar File Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: ApplicationJarFile
+
+      - name: Docker login & build & push
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/gaeha .
+          docker push ${{ secrets.DOCKER_USERNAME }}/gaeha
+
+  deploy:
+    needs: docker-push
+    runs-on: ubuntu-latest
+
+    steps:
+      # ssh 접속 -> 스크립트 실행
       - name: connect to server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ubuntu
           key: ${{ secrets.KEY }}
-      # 이전 파일 삭제
-      - name: Remove previous jar file
-        working-directory: gaeha
-        run: rm -f *.jar
-      # jar 파일
-      - name: Download jar file from artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: ApplicationJarFile
-          path: /gaeha
-      # 배포
-      - name: deploy to server
-        working-directory: gaeha
-        run: |
-          echo "$DEV_DEPLOY_SCRIPT" > deploy.sh
-          chmod 700 deploy.sh
-          sudo ./deploy.sh
+          script: sudo sh /home/ubuntu/gaeha/deploy.sh
+
