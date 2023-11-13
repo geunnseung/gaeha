@@ -44,7 +44,7 @@ jobs:
           path: build/libs/*.jar
 
   docker-push:
-    needs: docker push
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -60,7 +60,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/gaeha
 
   deploy:
-    needs: deploy
+    needs: docker-push
     runs-on: ubuntu-latest
 
     steps:
