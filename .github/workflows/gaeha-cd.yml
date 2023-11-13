@@ -44,7 +44,7 @@ jobs:
           path: build/libs/*.jar
 
   docker-push:
-    need: build
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -71,7 +71,8 @@ jobs:
   deploy:
     needs: docker-push
     runs-on: ubuntu-latest
-      
+
+    steps:
       # ssh 접속 -> 스크립트 실행
       - name: connect to server
         uses: appleboy/ssh-action@master
