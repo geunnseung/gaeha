@@ -16,7 +16,7 @@ permissions:
 # 작업 정의
 jobs:
   build:
-    name: deploy
+    name: build
     # 작업이 실행될 환경
     runs-on: ubuntu-latest
     # step 설정
@@ -44,14 +44,14 @@ jobs:
           path: build/libs/*.jar
 
   docker-push:
-    needs: build
+    needs: docker push
     runs-on: ubuntu-latest
 
     steps:
       - name: Download Jar File Artifact
         uses: actions/download-artifact@v3
         with:
-          name: build-artifact
+          name: ApplicationJarFile
 
       - name: Docker login & build & push
         run: |
@@ -60,7 +60,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/gaeha
 
   deploy:
-    needs: docker-push
+    needs: deploy
     runs-on: ubuntu-latest
 
     steps:
